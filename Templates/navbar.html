@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .topnav {
+            background-color: #333;
+            overflow: hidden;
+        }
+        .topnav a {
+            float: left;
+            display: block;
+            color: #fff;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        .topnav a:hover {
+            background-color: #555;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 70px; /* Smaller width */
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 60px; /* Adjusted to account for the top nav height */
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .sidebar a:hover {
+            background-color: #555;
+        }
+        .content {
+            margin-left: 70px; /* Adjusted to match sidebar width */
+            padding: 20px;
+        }
+        .icon {
+            margin-bottom: 5px;
+        }
+        .sidebar a span {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+        .sidebar a:hover span {
+            display: inline;
+        }
+        /* Custom styling for icons */
+        .fa-users {
+            color: #ffc107; /* yellow */
+        }
+        .fa-calendar-alt {
+            color: #2196f3; /* blue */
+        }
+        .fa-cog {
+            color: #4caf50; /* green */
+        }
+        .fa-sign-out-alt {
+            color: #f44336; /* red */
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <a href="{% url 'emplist' %}">
+        <i class="fas fa-users icon"></i>
+        <span>Employees</span>
+    </a>
+    <a href="{% url 'attendancetbl' %}">
+        <i class="fas fa-calendar-alt icon"></i>
+        <span>Attendance</span>
+    </a>
+    <a href="{% url 'adminlogout' %}">
+        <i class="fas fa-sign-out-alt icon"></i>
+        <span>Log Out</span>
+    </a>
+</div>
+<div class="content">
+{% block content %}
+{% endblock %}
+</div>
+</body>
+</html>

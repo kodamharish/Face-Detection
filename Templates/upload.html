@@ -1,0 +1,74 @@
+<!-- upload.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        footer {
+            text-align: center;
+            margin-top: 20px; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            flex-shrink: 0; 
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+</head>
+<body>
+    <h1>Face Recognition</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    <button id="capture-btn">Capture Image</button>
+    <button id="submit-btn" style="display:none;">Submit</button>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture-btn');
+        const submitButton = document.getElementById('submit-btn');
+        const constraints = {
+            video: true
+        };
+
+        // Access the camera and stream the video
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error('Error accessing camera:', err);
+            });
+
+        // Capture image from the video stream
+        captureButton.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            submitButton.style.display = 'block';
+        });
+
+       
+        submitButton.addEventListener('click', () => {
+            const dataURL = canvas.toDataURL('image/jpeg');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/submit/');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ image: dataURL }));
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Success:', xhr.responseText);
+                    
+                    // Redirect to another page after successful submission
+                    window.location.href = "'{% url  'facereg' %}'";
+                } else {
+                    console.error('Error:', xhr.statusText);
+                }
+            };
+        });
+    </script>
+    <footer>
+        &copy; 2024 Attendance Management System. All rights reserved.
+    </footer>
+</body>
+</html>

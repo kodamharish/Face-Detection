@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <link rel="icon" type="image/png" href="{% static 'Images/icon.png' %}">
+    <title>Admin Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            background-color: #f4f4f4; /* Updated background color */
+        }
+
+        header {
+            background-color: #383535; /* Updated header color */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px; /* Updated border-radius */
+            background-color: #fff; /* Updated background color */
+        }
+
+        legend {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px; /* Updated border-radius */
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #2e60df; /* Updated background color */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px; /* Updated border-radius */
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1e40af; /* Updated hover background color */
+        }
+
+        footer {
+            background-color: #383535; /* Updated footer color */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Attendance Management System</h1>
+    </header>
+
+    <form action="" method="POST">
+        <fieldset>
+            <legend>Admin Registration Form</legend>
+            {% csrf_token %}
+            <label>{{form.username.label}}</label>
+            {{form.username}}
+
+            <label>{{form.email.label}}</label>
+            {{form.email}}
+
+            <label>{{form.password1.label}}</label>
+            {{form.password1}}
+
+            <label>{{form.password2.label}}</label>
+            {{form.password2}}
+
+            {{form.errors}}
+            <br>
+            <br>
+            <input type="submit" value="Submit">
+        </fieldset>
+
+        <p>Already have an account? <a href="adminlogin">Login</a></p>
+    </form>
+
+    <footer>
+         &copy; 2024 Attendance Management System. All rights reserved.
+    </footer>
+</body>
+</html>

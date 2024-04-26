@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #bdb9b9; /* Darkened background color */
+            color: #161515; /* Text color changed to white */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            text-align: center;
+            background-color: #f7f2f2; /* Darkened card background color */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #090909; /* Changed title color to dark gray */
+            margin-bottom: 30px;
+        }
+
+        .employee-info, .attendance-details {
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        tr {
+            color: #090909;
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color:#ddd;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            flex-shrink: 0; 
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Attendance Details</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance Details</h1>
+        <div class="employee-info">
+            <form id="attendanceForm" method="GET" action="{% url 'attendance_details_emp' %}">
+                <label for="date">Select Date:</label>
+                <input type="date" id="date" name="date">
+                <button type="submit">Show Attendance</button>
+            </form>
+        </div>
+        <div class="attendance-details">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Sign-in Time</th>
+                        <th>Sign-out Time</th>
+                        <th>Total Work Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in attendance_records %}
+                    <tr>
+                        <td>{{ record.emp.emp_id }}</td>
+                        <td>
+                            {% if record.signin_time %}
+                                {{ record.signin_time }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.signout_time %}
+                                {{ record.signout_time }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.total_work_time %}
+                                {{ record.total_work_time }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.status == "Absent" %}
+                                Absent
+                            {% else %}
+                                Present
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer>
+        &copy; 2024 Attendance Management System. All rights reserved.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dateInput = document.getElementById('date');
+            const attendanceForm = document.getElementById('attendanceForm');
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedDate = urlParams.get('date');
+            
+            if (selectedDate) {
+                dateInput.value = selectedDate;
+            }
+
+            attendanceForm.addEventListener('submit', function (event) {
+                const selectedDate = dateInput.value;
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('date', selectedDate);
+                window.location.href = currentUrl.href;
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>

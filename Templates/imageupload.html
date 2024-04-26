@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #bdb9b9; /* Darkened background color */
+            color: #fff; /* Text color changed to white */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            text-align: center;
+            background-color: #f7f2f2; /* Darkened card background color */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #090909; /* Changed title color to dark gray */
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            margin: 20px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545; /* Red color for cancel button */
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333; /* Darker red color on hover */
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Please Sign In</h1>
+        <div class="image-container">
+            <img id="captured-image" style="display: none;">
+        </div>
+        <div class="buttons">
+            <button class="btn" id="capture-btn">Capture Image</button>
+            <form id="image-form" style="display: none;">
+                <input type="hidden" id="image-data" name="image_data">
+                <button type="submit" class="btn" id="submit-btn">Submit</button>
+            </form>
+            <button class="btn cancel-btn" id="cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+<script>
+
+    function getCSRFToken() {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function captureImage() {
+        var video = document.createElement('video');
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.onloadedmetadata = function(e) {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    var imageDataURL = canvas.toDataURL('image/jpeg');
+                    // Show captured image
+                    document.getElementById('captured-image').src = imageDataURL;
+                    document.getElementById('captured-image').style.display = 'block';
+                    // Display the submit button after successful image capture
+                    document.getElementById("submit-btn").style.display = "block";
+                };
+            })
+            .catch(function(err) {
+                console.error('Error accessing camera:', err);
+            });
+        $('#cancel-btn').click(function() {
+            video.srcObject.getTracks().forEach(track => track.stop());
+        });
+    }
+
+    function sendImage(imageData) {
+        var csrfToken = getCSRFToken();
+        $.ajax({
+            url: '{% url "facereg" %}',
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken },
+            data: { image_data: imageData },
+            success: function(response) {
+                // Handle success response from the server
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error response from the server
+                console.error('Error sending image:', error);
+            }
+        });
+    }
+
+    // Event listener for capturing image
+    $('#capture-btn').click(function() {
+        captureImage();
+    });
+</script>
+
+<footer>
+    &copy; 2024 Attendance Management System. All rights reserved.
+</footer>
+</body>
+</html>

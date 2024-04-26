@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Details</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .employee-details {
+        margin-top: 30px;
+    }
+
+    .details-item {
+        margin-bottom: 15px;
+    }
+
+    .details-item label {
+        font-weight: bold;
+    }
+
+    .details-item span {
+        margin-left: 10px;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animated {
+        animation: slideIn 0.5s ease-in-out;
+    }
+    footer {
+            background-color: #383535;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+</style>
+</head>
+<body>
+<div class="container animated">
+    <h1>Employee Details</h1>
+    <div class="employee-details">
+        <div class="details-item">
+            <label>Name:</label>
+            <span>{{ employee.name }}</span>
+        </div>
+        <div class="details-item">
+            <label>Employee ID:</label>
+            <span>{{ employee.employee_id }}</span>
+        </div>
+        <div class="details-item">
+            <label>Email:</label>
+            <span>{{ employee.email }}</span>
+        </div>
+        <!-- Add more details here -->
+    </div>
+</div>
+<footer>
+    &copy; 2024 Attendance Management System. All rights reserved.
+</footer>
+</body>
+</html>

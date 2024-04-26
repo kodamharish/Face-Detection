@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Camera Access</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    #video, #capturedImage {
+      max-width: 100%;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #captureBtn {
+      background-color: #4CAF50;
+      color: white;
+      margin-top: 20px;
+    }
+
+    #captureBtn:hover {
+      background-color: #45a049;
+    }
+
+    #captureBtn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    #submitBtn {
+      background-color: #2196F3;
+      color: white;
+      margin-top: 20px;
+    }
+
+    #submitBtn:hover {
+      background-color: #0b7dda;
+    }
+
+    .image-wrapper {
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .image-wrapper img {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .image-wrapper button {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #captureBtn {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="captureBtn" onclick="captureImage()">Capture Image</button>
+    <div id="imageContainer" style="display: none;">
+      <form id="image-form" action="{% url 'facereg' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Hidden input field to store the image data -->
+        <input type="hidden" id="imageDataInput" name="image">
+        <div class="image-wrapper">
+          <img id="capturedImage" src="" alt="Captured Image">
+          <button id="submitBtn" onclick="submitImage()">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let stream;
+
+    function startCamera() {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function (cameraStream) {
+          stream = cameraStream;
+          const video = document.getElementById('video');
+          video.srcObject = cameraStream;
+        })
+        .catch(function (error) {
+          console.error('Error accessing camera:', error);
+        });
+    }
+
+    function captureImage() {
+      const video = document.getElementById('video');
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const capturedImageData = canvas.toDataURL('image/png');
+
+      // Set the captured image data to the hidden input field
+      document.getElementById('imageDataInput').value = capturedImageData.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
+
+      // Stop the camera stream
+      stream.getTracks().forEach(function (track) {
+        track.stop();
+      });
+
+      const imageContainer = document.getElementById('imageContainer');
+      const capturedImage = document.getElementById('capturedImage');
+      capturedImage.src = capturedImageData;
+      imageContainer.style.display = 'block';
+
+      const captureBtn = document.getElementById('captureBtn');
+      captureBtn.disabled = true;
+
+      // Hide the video element
+      video.style.display = 'none';
+    }
+
+    function submitImage() {
+      // Submit the form
+      document.getElementById('image-form').submit();
+    }
+
+    startCamera();
+  </script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+{% include 'navbar.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #bdb9b9; /* Darkened background color */
+            color: #fff; /* Text color changed to white */
+        }
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            text-align: center;
+            background-color: #f7f2f2; /* Darkened card background color */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #090909; /* Changed title color to dark gray */
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr {
+            color: #1e1d1d;
+            background-color: #f2f2f2;
+        }
+        footer {
+            background-color: #383535;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .search-bar {
+            width: 40%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .date-filter,
+        .status-filter {
+            width: 30%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Attendance Details</h1>
+
+        <div class="filters">
+            <input type="text" class="search-bar" placeholder="Search..." oninput="filterTable()">
+            <input type="date" class="date-filter" onchange="filterTableByDate()">
+            <select class="status-filter" onchange="filterTableByStatus()">
+                <option value="">All Status</option>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+                <option value="Late">Late</option>
+            </select>
+        </div>
+        
+        <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Date</th>
+                    <th>Sign-in Time</th>
+                    <th>Sign-out Time</th>
+                    <th>Total Work Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.emp.emp_name }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>{{ record.signin_time|default:'N/A' }}</td>
+                    <td>{{ record.signout_time|default:'N/A' }}</td>
+                    <td>
+                        {% if record.total_work_time %}
+                            {{ record.total_work_time }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if record.status %}
+                            {{ record.status }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+  
+    <script>
+        function filterTableBySearch() {
+            const searchBar = document.querySelector('.search-bar');
+            const searchText = searchBar.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#attendance-table tbody tr');
+            
+            tableRows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const matchesSearch = name.includes(searchText);
+                
+                if (matchesSearch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function filterTableByDate() {
+            const dateFilter = document.querySelector('.date-filter');
+            const dateValue = dateFilter.value;
+            const tableRows = document.querySelectorAll('#attendance-table tbody tr');
+            
+            tableRows.forEach(row => {
+                const date = row.cells[1].textContent;
+                const dateFilterPassed = dateValue === '' || formatDate(date) === formatDate(dateValue);
+                
+                if (dateFilterPassed) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function filterTableByStatus() {
+            const statusFilter = document.querySelector('.status-filter');
+            const statusValue = statusFilter.value.toLowerCase().trim(); // Convert to lowercase
+            const tableRows = document.querySelectorAll('#attendance-table tbody tr');
+
+            tableRows.forEach(row => {
+                const status = row.cells[5].textContent.toLowerCase().trim(); // Corrected index to 5
+                const statusFilterPassed = statusValue === '' || status === statusValue;
+                
+                if (statusFilterPassed) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function filterTable() {
+            filterTableBySearch();
+            filterTableByDate();
+            filterTableByStatus();
+        }
+
+        // Function to format date to YYYY-MM-DD
+        function formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = `${d.getMonth() + 1}`.padStart(2, '0');
+            const day = `${d.getDate()}`.padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+    </script>
+</body>
+</html>

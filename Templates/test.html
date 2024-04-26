@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+
+<head>
+    <link rel="icon" type="image/png" href="{% static 'Images/icon.png' %}">
+    <title>Employee Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            background-color: #f4f4f4; /* Updated background color */
+        }
+
+        header {
+            background-color: #383535; /* Updated header color */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row; /* Updated to row */
+            align-items: flex-start; /* Align to the start of the cross-axis */
+            justify-content: space-between;
+            flex-grow: 1;
+            padding: 20px;
+            width: 100%; /* Take full width */
+            box-sizing: border-box; /* Include padding and border in width calculation */
+        }
+
+        .employee-details-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: calc(50% - 10px); /* Adjusted width with margin */
+            box-sizing: border-box; /* Include padding and border in width calculation */
+        }
+
+        .employee-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .employee-image {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .employee-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        table {
+            width: calc(50% - 10px); /* Adjusted width with margin */
+            border-collapse: collapse;
+            margin-left: 20px; /* Added margin between containers */
+            border: 2px solid #007BFF; /* Added border styling */
+        }
+
+        th, td {
+            border: 1px solid #007BFF; /* Added border styling */
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        footer {
+            background-color: #383535; /* Updated footer color */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Attendance Management System</h1>
+    </header>
+
+    <main>
+        <div class="employee-details-container">
+            <div class="employee-details">
+                <img class="employee-image" src="{% static 'Images/employee_logo.png' %}" alt="Employee Photo">
+                <div class="employee-info">
+                    <h2>{{ employee.first_name }} {{ employee.last_name }}</h2>
+                    <p>Employee ID: {{ employee.emp_id }}</p>
+                    <p>Email: {{ employee.emp_email }}</p>
+                    <p>Gender: {{ employee.gender }}</p>
+                    <p>Contact: {{ employee.contact }}</p>
+                    <p>Address: {{ employee.address }}</p>
+                    <p>Department: {{ employee.department }}</p>
+                    <p>Designation: {{ employee.designation }}</p>
+                    <p>Joining Date: {{ employee.joining_date }}</p>
+                    <!-- Add other employee details here -->
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Emp_Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attendance in attendance_details %}
+                    <tr>
+                        <td>{{ attendance.emp_name }}</td>
+                        <td>{{ attendance.date }}</td>
+                        <td>{{ attendance.time }}</td>
+                        <td>{{ attendance.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        &copy; 2024 Attendance Management System. All rights reserved.
+    </footer>
+</body>
+
+</html>

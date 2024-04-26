@@ -1,0 +1,98 @@
+{% extends 'navbar.html' %}
+{% block title %}Employee List{% endblock %}
+{% block content %}
+<h1>Employee List</h1>
+<div class="add-employee-btn">
+    <button onclick="location.href='/addemployee';">Add Employee</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Employee ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Gender</th>
+            <th>Contact</th>
+            <th>Address</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Joining Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in emp %}
+        <tr>
+            <td>{{ employee.emp_id }}</td>
+            <td>{{ employee.first_name }}</td>
+            <td>{{ employee.last_name }}</td>
+            <td>{{ employee.emp_email }}</td>
+            <td>{{ employee.gender }}</td>
+            <td>{{ employee.contact }}</td>
+            <td>{{ employee.address }}</td>
+            <td>{{ employee.department }}</td>
+            <td>{{ employee.designation }}</td>
+            <td>{{ employee.joining_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<style>
+    /* Add your CSS styles here */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 20px;
+    }
+    .add-employee-btn {
+        text-align: left;
+        margin-bottom: 20px;
+    }
+    .add-employee-btn button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .add-employee-btn button:hover {
+        background-color: #0056b3;
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+    }
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #007bff;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    tr:hover {
+        background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    tr:last-child td {
+        border-bottom: none;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Employee</title>
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .camera-container {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        #captureBtn {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #capturedImageContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #capturedImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Employee</h1>
+        <div class="camera-container" id="cameraContainer" style="display: none;">
+            <video id="video" autoplay></video>
+            <button id="captureBtn">Capture Photo</button>
+        </div>
+        <!-- Display captured image below -->
+        <div id="capturedImageContainer" style="display: none;">
+            <h3>Captured Image:</h3>
+            <img id="capturedImage" src="" alt="Captured Image">
+        </div>
+        <!-- End of captured image display -->
+        <form method="post" enctype="multipart/form-data" class="employee-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_first_name">First Name:</label>
+                <input type="text" id="id_first_name" name="first_name" placeholder="Enter first name" required>
+                <span class="error-message" id="id_first_name_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Last Name:</label>
+                <input type="text" id="id_last_name" name="last_name" placeholder="Enter last name" required>
+                <span class="error-message" id="id_last_name_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_emp_name">Employee Name:</label>
+                <input type="text" id="id_emp_name" name="emp_name" placeholder="Enter employee name" required>
+                <span class="error-message" id="id_emp_name_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_emp_id">Employee ID:</label>
+                <input type="text" id="id_emp_id" name="emp_id" placeholder="Enter employee ID" required>
+                <span class="error-message" id="id_emp_id_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_emp_email">Email:</label>
+                <input type="email" id="id_emp_email" name="emp_email" placeholder="Enter email" required>
+                <span class="error-message" id="id_emp_email_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_gender">Gender:</label>
+                <select id="id_gender" name="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_contact">Contact:</label>
+                <input type="text" id="id_contact" name="contact" placeholder="Enter contact number" required>
+                <span class="error-message" id="id_contact_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_address">Address:</label>
+                <textarea id="id_address" name="address" placeholder="Enter address" required></textarea>
+                <span class="error-message" id="id_address_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_department">Department:</label>
+                <input type="text" id="id_department" name="department" placeholder="Enter department" required>
+                <span class="error-message" id="id_department_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_designation">Designation:</label>
+                <input type="text" id="id_designation" name="designation" placeholder="Enter designation" required>
+                <span class="error-message" id="id_designation_error"></span>
+            </div>
+            <div class="form-group">
+                <label for="id_joining_date">Joining Date:</label>
+                <input type="date" id="id_joining_date" name="joining_date" required>
+                <span class="error-message" id="id_joining_date_error"></span>
+            </div>
+            <input type="hidden" id="imageDataInput" name="photo" required>
+            
+            <br><br>
+            <button id="openCameraBtn">Open Camera</button>
+            <input type="submit" value="Save">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const openCameraBtn = document.getElementById('openCameraBtn');
+            const cameraContainer = document.getElementById('cameraContainer');
+            const video = document.getElementById('video');
+            const captureBtn = document.getElementById('captureBtn');
+            const imageDataInput = document.getElementById('imageDataInput');
+            const capturedImageContainer = document.getElementById('capturedImageContainer');
+            const capturedImage = document.getElementById('capturedImage');
+
+            let stream;
+
+            openCameraBtn.addEventListener('click', function () {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (cameraStream) {
+                        stream = cameraStream;
+                        video.srcObject = cameraStream;
+                        cameraContainer.style.display = 'block';
+                    })
+                    .catch(function (error) {
+                        console.error('Error accessing camera:', error);
+                    });
+            });
+
+            captureBtn.addEventListener('click', function () {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const capturedImageData = canvas.toDataURL('image/jpeg');
+                imageDataInput.value = capturedImageData;
+                capturedImage.src = capturedImageData;
+                capturedImageContainer.style.display = 'block';
+                stream.getTracks().forEach(track => track.stop());
+                cameraContainer.style.display = 'none';
+            });
+            const nameRegex = /^[A-Za-z]+$/;
+            const emailRegex = /^[A-Za-z0-9._%+-]+@gmail\.com$/;
+            const contactRegex = /^[6-9]\d{9}$/;
+
+            const inputs = document.querySelectorAll('input, select, textarea');
+
+            inputs.forEach(input => {
+                const errorSpan = document.createElement('span');
+                errorSpan.classList.add('error-message');
+                errorSpan.id = `${input.id}_error`;
+                input.parentNode.appendChild(errorSpan);
+
+                input.addEventListener('input', function () {
+                    if (input.value.trim() !== '') {
+                        validateInput(input);
+                    }
+                });
+            });
+
+            const showError = (input, message) => {
+                const errorSpan = document.getElementById(`${input.id}_error`);
+                errorSpan.innerText = message;
+            }
+
+            const clearError = (input) => {
+                const errorSpan = document.getElementById(`${input.id}_error`);
+                errorSpan.innerText = '';
+            }
+
+            const validateInput = (input) => {
+                switch (input.name) {
+                    case 'first_name':
+                    case 'last_name':
+                    case 'emp_name':
+                        if (!nameRegex.test(input.value)) {
+                            showError(input, 'Name should contain only alphabets.');
+                        } else {
+                            clearError(input);
+                        }
+                        break;
+                    case 'emp_email':
+                        if (!emailRegex.test(input.value)) {
+                            showError(input, 'Email should end with @gmail.com.');
+                        } else {
+                            clearError(input);
+                        }
+                        break;
+                    case 'contact':
+                        if (!contactRegex.test(input.value)) {
+                            showError(input, 'Contact number should start with 6, 7, 8, or 9 and have a length of 10 digits.');
+                        } else {
+                            clearError(input);
+                        }
+                        break;
+                    default:
+                        if (input.value.trim() === '') {
+                            showError(input, `${input.name} is required.`);
+                        } else {
+                            clearError(input);
+                        }
+                }
+            }
+
+            const validateForm = () => {
+                inputs.forEach(input => {
+                    validateInput(input);
+                });
+            }
+
+            const form = document.querySelector('.employee-form');
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                validateForm();
+                const errorMessages = document.querySelectorAll('.error-message');
+                let hasError = false;
+                errorMessages.forEach(message => {
+                    if (message.innerText !== '') {
+                        hasError = true;
+                    }
+                });
+                if (!hasError) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

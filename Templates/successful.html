@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #bdb9b9; /* Darkened background color */
+            color: #161515; /* Text color changed to white */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            text-align: center;
+            background-color: #f7f2f2; /* Darkened card background color */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #090909; /* Changed title color to dark gray */
+            margin-bottom: 30px;
+        }
+
+        .employee-info, .attendance-details {
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        tr {
+            color: #090909;
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color:#ddd;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 18px;
+            flex-shrink: 0; 
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>Successful Sign-in</title>
+    <!-- Remove the link to your CSS file, it's not needed -->
+</head>
+<body>
+    <div class="container">
+        <h1>Successful</h1>
+        <div class="employee-info">
+            <!-- Employee Information -->
+            <h2>Employee Information</h2>
+            <p><strong>Employee ID:</strong> <strong>{{ employee_id }}</strong></p>
+            <p><strong>Name:</strong> <strong>{{ name }}</strong></p>
+            <p><strong>Date:</strong> <strong>{{ date|date:'Y-m-d' }}</strong></p>
+            <form method="GET" action="{% url 'attendance_details_emp' %}">
+                <label for="date">Select Date:</label>
+                <input type="date" id="date" name="date">
+                <button type="submit">Show Attendance</button>
+            </form>
+        </div>
+        <div class="attendance-details">
+            <!-- Attendance Details -->
+            <h2>Attendance Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Employee ID</th>
+                        <th>Sign-in Time</th>
+                        <th>Sign-out Time</th>
+                        <th>Total Work Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>{{ date|date:'Y-m-d' }}</strong></td>
+                        <td><strong>{{ employee_id }}</strong></td>
+                        <td><strong>{{ signin_time|default:''|time:'H:i:s' }}</strong></td>
+                        <td><strong>{{ signout_time|default:"Not available"|time:'H:i:s' }}</strong></td>
+                        <td><strong>{{ total_work_time }}</strong></td>
+                        <!-- Conditional logic to determine status -->
+                        <td>
+                            {% if status == "signin" %}
+                                Signed In
+                            {% elif status == "signout" %}
+                                {% if is_present is not None %}
+                                    {% if is_present %}
+                                        Present
+                                    {% else %}
+                                        Absent
+                                    {% endif %}
+                                {% else %}
+                                    Absent
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer>
+        &copy; 2024 Attendance Management System. All rights reserved.
+    </footer>
+</body>
+</html>
